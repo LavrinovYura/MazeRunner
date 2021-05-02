@@ -2,11 +2,14 @@ package MazeRunner;
 
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.pathfinding.CellMoveComponent;
 import com.almasb.fxgl.pathfinding.astar.AStarMoveComponent;
 import javafx.geometry.Point2D;
+
+
 
 public class PlayerComponent extends Component {
     private CellMoveComponent cell;
@@ -39,7 +42,8 @@ public class PlayerComponent extends Component {
     public void shoot() {
         Point2D center = entity.getCenter();
         Vec2 dir = Vec2.fromAngle(entity.getRotation()-90);
-        FXGL.spawn("Bullet", new SpawnData(center.getX()-5, center.getY()-5).put("dir", dir.toPoint2D()));
+        Entity bullet = FXGL.spawn("Bullet", new SpawnData(center.getX()-5, center.getY()-5).put("dir", dir.toPoint2D()));
+
     }
 }
 

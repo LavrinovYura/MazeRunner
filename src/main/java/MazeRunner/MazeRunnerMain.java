@@ -138,6 +138,10 @@ public class MazeRunnerMain extends GameApplication {
                         spawn("3", cellX, cellY);
                         break;
                     }
+                    case 4: {
+                        spawn("4", cellX, cellY);
+                        break;
+                    }
                     case 8: {
                         player = spawn("8", cellX, cellY);
                         playerComponent = player.getComponent(PlayerComponent.class);

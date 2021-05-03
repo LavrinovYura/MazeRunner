@@ -16,7 +16,7 @@ public class SensorComponent extends Component {
     @Override
     public void onUpdate(double tpf) {
         Entity player = getGameWorld().getSingleton(PLAYER);
-        if (getEntity().distance(player) < 150) {
+        if (getEntity().distance(player) < 200) {
             astar.moveToCell(player.call("getCellX"), player.call("getCellY"));
         }
     }

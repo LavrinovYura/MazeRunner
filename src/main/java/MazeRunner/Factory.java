@@ -34,11 +34,11 @@ public class Factory implements EntityFactory {
     }
 
 
-    @Spawns("E")
+    @Spawns("4")
     public Entity newEnemy(SpawnData data) {
         var e = FXGL.entityBuilder(data)
                 .type(ENEMY)
-                .viewWithBBox(new Rectangle(40, 40, Color.BLACK))
+                .viewWithBBox(new Rectangle(40, 40, Color.BROWN))
                 .with(new CellMoveComponent(40, 40, 125))
                 .with(new AStarMoveComponent(new LazyValue<>(() -> geto("grid"))))
                 .with(new SensorComponent())

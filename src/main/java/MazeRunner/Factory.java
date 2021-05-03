@@ -43,7 +43,7 @@ public class Factory implements EntityFactory {
                 .with(new CellMoveComponent(40, 40, 125))
                 .with(new AStarMoveComponent(new LazyValue<>(() -> geto("grid"))))
                 .with(new SensorComponent())
-                .collidable()
+                .with(new CollidableComponent(true))
                 .build();
         e.setLocalAnchorFromCenter();
         return e;
@@ -58,7 +58,7 @@ public class Factory implements EntityFactory {
                 .with(new CellMoveComponent(40, 40, 300))
                 .with(new AStarMoveComponent(FXGL.<MazeRunnerMain>getAppCast().getGrid()))
                 .with(new PlayerComponent())
-                .collidable()
+                .with(new CollidableComponent(true))
                 .build();
         e.setLocalAnchorFromCenter();
         return e;

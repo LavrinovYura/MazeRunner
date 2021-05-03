@@ -16,6 +16,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 
 import static MazeRunner.Type.*;
@@ -23,9 +25,6 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 
 
 public class MazeRunnerMain extends GameApplication {
-    public static final int BLOCK_SIZE = 40;
-
-    public static final int MAP_SIZE = 40;
 
     private AStarGrid grid;
 
@@ -36,6 +35,7 @@ public class MazeRunnerMain extends GameApplication {
     public AStarGrid getGrid() {
         return grid;
     }
+
     @Override
     protected void initGameVars(Map<String, Object> vars) {
         vars.put("lvl", 1);
@@ -119,20 +119,13 @@ public class MazeRunnerMain extends GameApplication {
     @Override
     protected void initGame() {
         getGameWorld().addEntityFactory(new Factory());
-
-        setLevel(1);
-
-    }
-    private void nextLevel() {
-        inc("lvl", +1);
-        var levelNum = geti("lvl");
-
-        setLevel(levelNum);
+        setLevel();
     }
 
-    public void setLevel(int levelNum) {
-        getGameWorld().getEntitiesCopy().forEach(Entity::removeFromWorld);
-        Level level = getAssetLoader().loadLevel("lvl" + levelNum + ".txt", new TextLevelLoader(40, 40, '0'));
+    public void setLevel() {
+
+
+        Level level = getAssetLoader().loadLevel("lvl.txt", new TextLevelLoader(40, 40, '0'));
         getGameWorld().setLevel(level);
         grid = AStarGrid.fromWorld(getGameWorld(), 20, 20, 40, 40, type -> {
             if (type.equals(WALL))
@@ -142,7 +135,7 @@ public class MazeRunnerMain extends GameApplication {
         });
         set("grid", grid);
 
-        player = spawn("P",100,100);
+        player = spawn("P", 100, 100);
         playerComponent = player.getComponent(PlayerComponent.class);
 
     }
@@ -166,7 +159,14 @@ public class MazeRunnerMain extends GameApplication {
         FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(PLAYER, EXIT) {
             @Override
             protected void onCollisionBegin(Entity player, Entity exit) {
-                nextLevel();
+                File file = new File("src\\main\\resources\\assets\\levels\\lvl.txt");
+
+                try {
+                    RandomLvl.drawFile(file);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                setLevel();
             }
         });
     }

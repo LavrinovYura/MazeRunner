@@ -38,7 +38,6 @@ public class Factory implements EntityFactory {
     public Entity newEnemy(SpawnData data) {
         var e = FXGL.entityBuilder(data)
                 .type(ENEMY)
-                .bbox(new HitBox(new Point2D(4, 4), BoundingShape.box(40, 40)))
                 .viewWithBBox(new Rectangle(40, 40, Color.BLACK))
                 .with(new CellMoveComponent(40, 40, 125))
                 .with(new AStarMoveComponent(new LazyValue<>(() -> geto("grid"))))
@@ -49,14 +48,14 @@ public class Factory implements EntityFactory {
         return e;
     }
 
-    @Spawns("P")
+    @Spawns("8")
     public Entity spawnPlayer(SpawnData data) {
         var e =  entityBuilder(data)
-                .type(PLAYER)
+                .type(Type.PLAYER)
                 .bbox(new HitBox(new Point2D(4, 4), BoundingShape.box(40, 40)))
                 .viewWithBBox(new Rectangle(40, 40, Color.BLUE))
                 .with(new CellMoveComponent(40, 40, 300))
-                .with(new AStarMoveComponent(FXGL.<MazeRunnerMain>getAppCast().getGrid()))
+                .with(new AStarMoveComponent(new LazyValue<>(() -> geto("grid"))))
                 .with(new PlayerComponent())
                 .with(new CollidableComponent(true))
                 .build();
@@ -77,7 +76,7 @@ public class Factory implements EntityFactory {
                 .build();
     }
 
-    @Spawns("R")
+    @Spawns("3")
     public Entity spawnExit(SpawnData data) {
         return entityBuilder(data)
                 .type(EXIT)

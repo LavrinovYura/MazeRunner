@@ -6,8 +6,6 @@ import com.almasb.fxgl.app.scene.FXGLMenu;
 import com.almasb.fxgl.app.scene.SceneFactory;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.level.Level;
-import com.almasb.fxgl.entity.level.text.TextLevelLoader;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.pathfinding.CellState;
 import com.almasb.fxgl.pathfinding.astar.AStarGrid;
@@ -15,10 +13,6 @@ import com.almasb.fxgl.physics.CollisionHandler;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Map;
 
 import static MazeRunner.Type.*;
 import static com.almasb.fxgl.dsl.FXGL.*;
@@ -28,18 +22,14 @@ public class MazeRunnerMain extends GameApplication {
 
     private AStarGrid grid;
 
-    private Entity player;
+    public Entity player;
 
-    private PlayerComponent playerComponent;
+    public PlayerComponent playerComponent;
 
     public AStarGrid getGrid() {
         return grid;
     }
 
-    @Override
-    protected void initGameVars(Map<String, Object> vars) {
-        vars.put("lvl", 1);
-    }
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -76,21 +66,21 @@ public class MazeRunnerMain extends GameApplication {
         getInput().addAction(new UserAction("Move Left") {
             @Override
             protected void onAction() {
-                playerComponent.moveLeft();
+                player.getComponent(PlayerComponent.class).moveLeft();
             }
         }, KeyCode.A);
 
         getInput().addAction(new UserAction("Move Down") {
             @Override
             protected void onAction() {
-                playerComponent.moveDown();
+                player.getComponent(PlayerComponent.class).moveDown();
             }
         }, KeyCode.S);
 
         getInput().addAction(new UserAction("Move Right") {
             @Override
             protected void onAction() {
-                playerComponent.moveRight();
+                player.getComponent(PlayerComponent.class).moveRight();
             }
         }, KeyCode.D);
 
@@ -103,30 +93,63 @@ public class MazeRunnerMain extends GameApplication {
         getInput().addAction(new UserAction("Rotate Right") {
             @Override
             protected void onAction() {
-                playerComponent.rotateRight();
+                player.getComponent(PlayerComponent.class).rotateRight();
             }
         }, KeyCode.E);
 
         getInput().addAction(new UserAction("Rotate Left") {
             @Override
             protected void onAction() {
-                playerComponent.rotateLeft();
+                player.getComponent(PlayerComponent.class).rotateLeft();
             }
         }, KeyCode.Q);
 
     }
 
+
     @Override
     protected void initGame() {
         getGameWorld().addEntityFactory(new Factory());
         setLevel();
+
     }
 
     public void setLevel() {
+        int[][] ar;
 
+        ar = RandomLvl.drawRandom();
 
-        Level level = getAssetLoader().loadLevel("lvl.txt", new TextLevelLoader(40, 40, '0'));
-        getGameWorld().setLevel(level);
+        int cellX = 0;
+        int cellY = 0;
+        for (int i = 0; i < 20; i++) {
+            for (int j = 0; j < 20; j++) {
+                switch (ar[i][j]) {
+                    case 0:
+                        break;
+                    case 1: {
+                        spawn("1", cellX, cellY);
+                        break;
+                    }
+                    case 2: {
+                       spawn("2", cellX, cellY);
+                        break;
+                    }
+                    case 3: {
+                        spawn("3", cellX, cellY);
+                        break;
+                    }
+                    case 8: {
+                        player = spawn("8", cellX, cellY);
+                        playerComponent = player.getComponent(PlayerComponent.class);
+                        break;
+                    }
+                }
+                cellX += 40;
+            }
+            cellY += 40;
+            cellX = 0;
+        }
+
         grid = AStarGrid.fromWorld(getGameWorld(), 20, 20, 40, 40, type -> {
             if (type.equals(WALL))
                 return CellState.NOT_WALKABLE;
@@ -134,9 +157,6 @@ public class MazeRunnerMain extends GameApplication {
             return CellState.WALKABLE;
         });
         set("grid", grid);
-
-        player = spawn("P", 100, 100);
-        playerComponent = player.getComponent(PlayerComponent.class);
 
     }
 
@@ -159,13 +179,7 @@ public class MazeRunnerMain extends GameApplication {
         FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(PLAYER, EXIT) {
             @Override
             protected void onCollisionBegin(Entity player, Entity exit) {
-                File file = new File("src\\main\\resources\\assets\\levels\\lvl.txt");
-
-                try {
-                    RandomLvl.drawFile(file);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                getGameWorld().getEntitiesCopy().forEach(Entity::removeFromWorld);
                 setLevel();
             }
         });

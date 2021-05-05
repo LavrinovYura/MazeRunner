@@ -1,5 +1,8 @@
 package MazeRunner;
 
+import MazeRunner.Components.BossComponent;
+import MazeRunner.Components.EnemyComponent;
+import MazeRunner.Components.PlayerComponent;
 import com.almasb.fxgl.core.util.LazyValue;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.dsl.components.HealthIntComponent;
@@ -16,8 +19,8 @@ import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.ui.ProgressBar;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 
+import static MazeRunner.MazeRunnerMain.CellSize;
 import static MazeRunner.Type.*;
 import static com.almasb.fxgl.dsl.FXGL.geto;
 import static com.almasb.fxgl.dsl.FXGL.texture;
@@ -25,6 +28,7 @@ import static com.almasb.fxgl.dsl.FXGLForKtKt.entityBuilder;
 
 
 public class Factory implements EntityFactory {
+
     @Spawns("BG")
     public Entity newBackground(SpawnData data) {
         return FXGL.entityBuilder()
@@ -40,7 +44,7 @@ public class Factory implements EntityFactory {
         return FXGL.entityBuilder(data)
                 .type(WALL)
                 .with(new CollidableComponent(true))
-                .viewWithBBox(texture("wall.png", 40, 40))
+                .viewWithBBox(texture("wall.png", CellSize, CellSize))
                 .build();
     }
 
@@ -58,7 +62,7 @@ public class Factory implements EntityFactory {
         var e = FXGL.entityBuilder(data)
                 .type(ENEMY)
                 .bbox(new HitBox(new Point2D(4, 4), BoundingShape.box(40, 40)))
-                .with(new CellMoveComponent(40, 40, 125))
+                .with(new CellMoveComponent(CellSize, CellSize, 300))
                 .with(hp)
                 .view(hpView)
                 .with(new AStarMoveComponent(new LazyValue<>(() -> geto("grid"))))
@@ -71,17 +75,19 @@ public class Factory implements EntityFactory {
 
     @Spawns("B")
     public Entity newBoss(SpawnData data) {
-        var hp =new HealthIntComponent(30);
+        var hp =new HealthIntComponent(100);
         var hpView = new ProgressBar(false);
         hpView.setFill(Color.GREEN);
-        hpView.setMaxValue(30);
-        hpView.setWidth(40);
+        hpView.setMaxValue(100);
+        hpView.setWidth(60);
+        hpView.setTranslateY(-15);
+        hpView.setTranslateX(3);
         hpView.currentValueProperty().bind(hp.valueProperty());
 
         var e = FXGL.entityBuilder(data)
                 .type(BOSS)
                 .bbox(new HitBox(new Point2D(4, 4), BoundingShape.box(72, 96)))
-                .with(new CellMoveComponent(40, 40, 250))
+                .with(new CellMoveComponent(CellSize, CellSize, 150))
                 .with(hp)
                 .view(hpView)
                 .with(new AStarMoveComponent(new LazyValue<>(() -> geto("grid"))))
@@ -94,10 +100,21 @@ public class Factory implements EntityFactory {
 
     @Spawns("P")
     public Entity newPlayer(SpawnData data) {
+        var hp =new HealthIntComponent(100);
+        var hpView = new ProgressBar(false);
+        hpView.setFill(Color.GREEN);
+        hpView.setMaxValue(100);
+        hpView.setWidth(40);
+        hpView.setTranslateY(-15);
+
+        hpView.currentValueProperty().bind(hp.valueProperty());
+
         var e =  entityBuilder(data)
                 .type(Type.PLAYER)
                 .bbox(new HitBox(new Point2D(4, 4), BoundingShape.box(39, 30)))
-                .with(new CellMoveComponent(40, 40, 250))
+                .with(hp)
+                .view(hpView)
+                .with(new CellMoveComponent(CellSize, CellSize, 250))
                 .with(new AStarMoveComponent(new LazyValue<>(() -> geto("grid"))))
                 .with(new CollidableComponent(true))
                 .with(new PlayerComponent())
@@ -108,16 +125,14 @@ public class Factory implements EntityFactory {
     @Spawns("Bullet")
     public Entity spawnBullet(SpawnData data) {
 
-        var e = FXGL.entityBuilder(data)
+       return FXGL.entityBuilder(data)
                 .at(data.getX(), data.getY() - 6.5)
                 .type(BULLET)
-                .viewWithBBox("bullet.png")
+                .viewWithBBox(texture("bullet2.png",10,10))
                 .with(new CollidableComponent(true))
                 .with(new ProjectileComponent(data.get("direction"), 1200))
                 .rotationOrigin(0, 1)
                 .build();
-
-        return e;
     }
 
     @Spawns("EX")
@@ -125,7 +140,7 @@ public class Factory implements EntityFactory {
         return entityBuilder(data)
                 .type(EXIT)
                 .viewWithBBox("exit.jpg")
-                .scaleOrigin(40,40)
+                .scaleOrigin(CellSize,CellSize)
                 .collidable()
                 .build();
     }

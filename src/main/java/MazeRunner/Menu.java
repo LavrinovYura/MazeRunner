@@ -15,7 +15,6 @@ public class Menu extends FXGLMenu {
     public Menu() {
         super(MenuType.MAIN_MENU);
         Node back = texture("back.jpg");
-        String musicFile = "StayTheNight.mp3";     // For example
         var menuBox = new VBox(
                 5,
                 new MenuButton("New Game", this::fireNewGame),

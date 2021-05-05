@@ -1,6 +1,5 @@
 package MazeRunner;
 
-import java.io.*;
 import java.util.Random;
 
 public class RandomLvl {
@@ -37,8 +36,9 @@ public class RandomLvl {
         int r;
         Random random = new Random();
         r = random.nextInt(15) + 1;
-        if (r > 2) {
+        if (r > 3) {
             for (int i = 0; i < 6; i++) {
+
                 switch (i) {
                     case 0, 1 -> r = random.nextInt(4) + 2;
                     case 2, 3 -> r = random.nextInt(6) + 7;
@@ -62,6 +62,9 @@ public class RandomLvl {
             randomArray[19][r] = "EX";
 
         } else {
+            for (int i =4; i<15; i++){
+                randomArray[9][i] = "W";
+            }
             randomArray[10][10] = "B";
         }
         return randomArray;

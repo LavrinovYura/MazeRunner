@@ -1,5 +1,5 @@
 package MazeRunner;
 
 public enum Type {
-    PLAYER, ENEMY, BULLET, WALL, EXIT
+    PLAYER, ENEMY, BULLET, WALL, EXIT, BOSS
 }

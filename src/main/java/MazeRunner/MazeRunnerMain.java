@@ -5,7 +5,9 @@ import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.app.scene.FXGLMenu;
 import com.almasb.fxgl.app.scene.SceneFactory;
 import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.dsl.components.HealthIntComponent;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.level.Level;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.pathfinding.CellState;
 import com.almasb.fxgl.pathfinding.astar.AStarGrid;
@@ -16,6 +18,7 @@ import javafx.scene.input.MouseButton;
 
 import static MazeRunner.Type.*;
 import static com.almasb.fxgl.dsl.FXGL.*;
+import static com.almasb.fxgl.dsl.FXGLForKtKt.getInput;
 
 
 public class MazeRunnerMain extends GameApplication {
@@ -87,22 +90,10 @@ public class MazeRunnerMain extends GameApplication {
         getInput().addAction(new UserAction("Shoot") {
             @Override
             protected void onActionBegin() {
-                player.getComponent(PlayerComponent.class).shoot();
+
+                playerComponent.shoot(getInput().getMousePositionWorld());
             }
         }, MouseButton.PRIMARY);
-        getInput().addAction(new UserAction("Rotate Right") {
-            @Override
-            protected void onAction() {
-                player.getComponent(PlayerComponent.class).rotateRight();
-            }
-        }, KeyCode.E);
-
-        getInput().addAction(new UserAction("Rotate Left") {
-            @Override
-            protected void onAction() {
-                player.getComponent(PlayerComponent.class).rotateLeft();
-            }
-        }, KeyCode.Q);
 
     }
 
@@ -115,7 +106,7 @@ public class MazeRunnerMain extends GameApplication {
     }
 
     public void setLevel() {
-        int[][] ar;
+        String[][] ar;
 
         ar = RandomLvl.drawRandom();
 
@@ -124,29 +115,31 @@ public class MazeRunnerMain extends GameApplication {
         for (int i = 0; i < 20; i++) {
             for (int j = 0; j < 20; j++) {
                 switch (ar[i][j]) {
-                    case 0:
-                        break;
-                    case 1: {
-                        spawn("1", cellX, cellY);
-                        break;
-                    }
-                    case 2: {
-                       spawn("2", cellX, cellY);
+                    case "0": break;
+
+                    case "W": {
+                        spawn("W", cellX, cellY);
                         break;
                     }
-                    case 3: {
-                        spawn("3", cellX, cellY);
+                    case "EX": {
+                       spawn("EX", cellX, cellY);
                         break;
                     }
-                    case 4: {
-                        spawn("4", cellX, cellY);
+                    case "B": {
+                        spawn("B", cellX, cellY);
                         break;
                     }
-                    case 8: {
-                        player = spawn("8", cellX, cellY);
+                    case "E": {
+                        spawn("E", cellX, cellY);
+                        break;
+                    }
+                    case "P": {
+                        player = spawn("P", cellX, cellY);
                         playerComponent = player.getComponent(PlayerComponent.class);
+                        spawn("BG");
                         break;
                     }
+
                 }
                 cellX += 40;
             }
@@ -162,30 +155,42 @@ public class MazeRunnerMain extends GameApplication {
         });
         set("grid", grid);
 
+        //getGameScene().getViewport().bindToEntity(player, getAppWidth() / 2, getAppHeight() / 2);
+
     }
 
 
     @Override
     protected void initPhysics() {
-        FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(ENEMY, BULLET) {
-            @Override
-            protected void onCollisionBegin(Entity bullet, Entity enemy) {
-                enemy.removeFromWorld();
+        onCollisionBegin(ENEMY,BULLET,(enemy,bullet)-> {
+            var hp = enemy.getComponent(HealthIntComponent.class);
+            if(hp.getValue()>1){
                 bullet.removeFromWorld();
+                hp.damage(1);
+                return;
             }
+            enemy.removeFromWorld();
+            bullet.removeFromWorld();
         });
-        FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(BULLET, WALL) {
-            @Override
-            protected void onCollisionBegin(Entity bullet, Entity wall) {
+        onCollisionBegin(BOSS,BULLET,(boss,bullet) -> {
+            var hp = boss.getComponent(HealthIntComponent.class);
+            if(hp.getValue()>1){
                 bullet.removeFromWorld();
+                hp.damage(1);
+                return;
             }
+
+            boss.removeFromWorld();
+            bullet.removeFromWorld();
+            spawn("EX",400,400);
+
         });
-        FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(PLAYER, EXIT) {
-            @Override
-            protected void onCollisionBegin(Entity player, Entity exit) {
+        onCollisionBegin(WALL,BULLET,(wall,bullet)-> {
+                bullet.removeFromWorld();
+        });
+        onCollisionBegin(PLAYER,EXIT,(player,exit)-> {
                 getGameWorld().getEntitiesCopy().forEach(Entity::removeFromWorld);
                 setLevel();
-            }
         });
     }
 

@@ -7,6 +7,7 @@ plugins {
 group 'org.example'
 version '1.0-SNAPSHOT'
 
+
 repositories {
     jcenter()
     mavenCentral()
@@ -19,9 +20,10 @@ dependencies {
     compile 'com.github.almasb:fxgl:11.15'
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
+
 javafx {
     version = "15.0.1"
     modules = [ 'javafx.controls','javafx.fxml' ]
 }
 
-mainClassName = "Main"
+mainClassName = "src/main/java/MazeRunner/MazeRunnerMain.java"

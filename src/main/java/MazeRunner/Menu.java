@@ -21,7 +21,8 @@ public class Menu extends FXGLMenu {
                 new MenuButton("New Game", this::fireNewGame),
                 new MenuButton("Exit", this::fireExit)
         );
-        back.setTranslateX(-150);
+       
+
         menuBox.setTranslateX(getAppWidth() / 2.0 - 50);
         menuBox.setTranslateY(getAppHeight() / 2.0 - 50);
         getContentRoot().getChildren().addAll(back, menuBox);

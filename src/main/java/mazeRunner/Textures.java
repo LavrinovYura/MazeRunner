@@ -1,4 +1,4 @@
-package MazeRunner;
+package mazeRunner;
 
 import javafx.scene.image.Image;
 

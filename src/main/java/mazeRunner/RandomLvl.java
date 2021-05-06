@@ -1,8 +1,8 @@
-package MazeRunner;
+package mazeRunner;
 
 import java.util.Random;
 
-import static MazeRunner.Type.*;
+import static mazeRunner.Type.*;
 
 
 public class RandomLvl {

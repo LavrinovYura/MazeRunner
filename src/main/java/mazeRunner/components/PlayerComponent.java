@@ -1,8 +1,7 @@
-package MazeRunner.Components;
+package mazeRunner.components;
 
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.Component;
-import com.almasb.fxgl.pathfinding.CellMoveComponent;
 import com.almasb.fxgl.pathfinding.astar.AStarMoveComponent;
 import javafx.geometry.Point2D;
 

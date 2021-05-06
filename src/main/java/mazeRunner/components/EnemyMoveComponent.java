@@ -1,14 +1,12 @@
-package MazeRunner.Components;
+package mazeRunner.components;
 
-import MazeRunner.Type;
+import mazeRunner.Type;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.component.Required;
-import com.almasb.fxgl.pathfinding.CellState;
 import com.almasb.fxgl.pathfinding.astar.AStarMoveComponent;
 
-import static MazeRunner.Type.*;
-import static MazeRunner.MazeRunnerMain.grid;
+import static mazeRunner.Type.*;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.getGameWorld;
 
 @Required(AStarMoveComponent.class)

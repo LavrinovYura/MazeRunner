@@ -1,4 +1,4 @@
-package MazeRunner;
+package mazeRunner;
 
 public class MazeParameters {
     public static final int CELL_SIZE = 40;

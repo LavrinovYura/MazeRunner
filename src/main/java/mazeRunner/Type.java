@@ -1,4 +1,4 @@
-package MazeRunner;
+package mazeRunner;
 
 public enum Type {
     PLAYER, ENEMY, BULLET, WALL, EXIT, BOSS, ENEMY_BOSS;

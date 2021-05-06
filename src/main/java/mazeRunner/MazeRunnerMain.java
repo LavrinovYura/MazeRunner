@@ -1,6 +1,6 @@
-package MazeRunner;
+package mazeRunner;
 
-import MazeRunner.Components.PlayerComponent;
+import mazeRunner.components.PlayerComponent;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.app.scene.FXGLMenu;
@@ -10,14 +10,13 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.pathfinding.CellState;
 import com.almasb.fxgl.pathfinding.astar.AStarGrid;
-import com.almasb.fxgl.physics.PhysicsWorld;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import org.jetbrains.annotations.NotNull;
 
-import static MazeRunner.MazeParameters.CELL_SIZE;
-import static MazeRunner.MazeParameters.FIELD_SIZE;
-import static MazeRunner.Type.*;
+import static mazeRunner.MazeParameters.CELL_SIZE;
+import static mazeRunner.MazeParameters.FIELD_SIZE;
+import static mazeRunner.Type.*;
 import static com.almasb.fxgl.dsl.FXGL.*;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.getInput;
 

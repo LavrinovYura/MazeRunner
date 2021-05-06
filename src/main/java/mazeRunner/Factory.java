@@ -1,6 +1,6 @@
-package MazeRunner;
+package mazeRunner;
 
-import MazeRunner.Components.*;
+import mazeRunner.components.*;
 import com.almasb.fxgl.core.util.LazyValue;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.dsl.components.HealthIntComponent;
@@ -18,12 +18,12 @@ import com.almasb.fxgl.ui.ProgressBar;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 
-import static MazeRunner.MazeParameters.CELL_SIZE;
-import static MazeRunner.Type.*;
+import static mazeRunner.MazeParameters.CELL_SIZE;
+import static mazeRunner.Type.*;
 import static com.almasb.fxgl.dsl.FXGL.geto;
 import static com.almasb.fxgl.dsl.FXGL.texture;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.entityBuilder;
-import  static MazeRunner.Textures.*;
+import  static mazeRunner.Textures.*;
 
 public class Factory implements EntityFactory {
 

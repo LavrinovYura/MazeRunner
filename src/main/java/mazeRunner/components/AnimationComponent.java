@@ -1,4 +1,4 @@
-package MazeRunner.Components;
+package mazeRunner.components;
 
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.component.Required;

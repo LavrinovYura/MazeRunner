@@ -1,11 +1,10 @@
-package MazeRunner;
+package mazeRunner;
 
 import com.almasb.fxgl.app.scene.FXGLMenu;
 import com.almasb.fxgl.app.scene.MenuType;
 import javafx.beans.binding.Bindings;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 import static com.almasb.fxgl.dsl.FXGLForKtKt.*;

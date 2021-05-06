@@ -13,18 +13,20 @@ import static com.almasb.fxgl.dsl.FXGLForKtKt.*;
 public class Menu extends FXGLMenu {
 
     public Menu() {
+
         super(MenuType.MAIN_MENU);
         Node back = texture("back.jpg");
-        var menuBox = new VBox(
-                5,
-                new MenuButton("New Game", this::fireNewGame),
-                new MenuButton("Exit", this::fireExit)
-        );
-       
 
-        menuBox.setTranslateX(getAppWidth() / 2.0 - 50);
-        menuBox.setTranslateY(getAppHeight() / 2.0 - 50);
-        getContentRoot().getChildren().addAll(back, menuBox);
+        MenuButton ng = new MenuButton("New Game", this::fireNewGame);
+        MenuButton ex = new MenuButton("Exit", this::fireExit);
+
+        ng.setTranslateX(getAppWidth() / 2.0 -50);
+        ng.setTranslateY(getAppWidth() / 2.0);
+
+        ex.setTranslateX(getAppHeight() / 2.0 - 50);
+        ex.setTranslateY(getAppHeight() / 2.0 + 50);
+
+        getContentRoot().getChildren().addAll(back, ng, ex);
     }
 
     private static class MenuButton extends Parent {

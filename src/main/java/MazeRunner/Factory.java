@@ -1,8 +1,6 @@
 package MazeRunner;
 
-import MazeRunner.Components.BossComponent;
-import MazeRunner.Components.EnemyComponent;
-import MazeRunner.Components.PlayerComponent;
+import MazeRunner.Components.*;
 import com.almasb.fxgl.core.util.LazyValue;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.dsl.components.HealthIntComponent;
@@ -20,12 +18,12 @@ import com.almasb.fxgl.ui.ProgressBar;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 
-import static MazeRunner.MazeRunnerMain.CellSize;
+import static MazeRunner.MazeParameters.CELL_SIZE;
 import static MazeRunner.Type.*;
 import static com.almasb.fxgl.dsl.FXGL.geto;
 import static com.almasb.fxgl.dsl.FXGL.texture;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.entityBuilder;
-
+import  static MazeRunner.Textures.*;
 
 public class Factory implements EntityFactory {
 
@@ -33,7 +31,7 @@ public class Factory implements EntityFactory {
     public Entity newBackground(SpawnData data) {
         return FXGL.entityBuilder()
                 .at(-200, -200)
-                .view("bg2.jpg")
+                .view(BG_TEXTURE)
                 .zIndex(-1)
                 .build();
     }
@@ -44,7 +42,7 @@ public class Factory implements EntityFactory {
         return FXGL.entityBuilder(data)
                 .type(WALL)
                 .with(new CollidableComponent(true))
-                .viewWithBBox(texture("wall.png", CellSize, CellSize))
+                .viewWithBBox(texture(WALL_TEXTURE, CELL_SIZE, CELL_SIZE))
                 .build();
     }
 
@@ -61,12 +59,38 @@ public class Factory implements EntityFactory {
 
         var e = FXGL.entityBuilder(data)
                 .type(ENEMY)
-                .bbox(new HitBox(new Point2D(4, 4), BoundingShape.box(40, 40)))
-                .with(new CellMoveComponent(CellSize, CellSize, 300))
+                .bbox(new HitBox(new Point2D(4, 4), BoundingShape.box(CELL_SIZE, CELL_SIZE)))
+                .with(new CellMoveComponent(CELL_SIZE, CELL_SIZE, 300))
                 .with(hp)
                 .view(hpView)
                 .with(new AStarMoveComponent(new LazyValue<>(() -> geto("grid"))))
-                .with(new EnemyComponent())
+                .with(new EnemyMoveComponent(ENEMY))
+                .with(new AnimationComponent(ENEMY_UP,ENEMY_DOWN,ENEMY_LEFT,ENEMY_RIGHT,54, 40,3,2))
+                .with(new CollidableComponent(true))
+                .build();
+        e.setLocalAnchorFromCenter();
+        return e;
+    }
+    @Spawns("EB")
+    public Entity newEnemyBoss(SpawnData data) {
+        var hp =new HealthIntComponent(15);
+        var hpView = new ProgressBar(false);
+        hpView.setFill(Color.GREEN);
+        hpView.setMaxValue(15);
+        hpView.setWidth(35);
+        hpView.setTranslateY(-15);
+        hpView.setTranslateX(10);
+        hpView.currentValueProperty().bind(hp.valueProperty());
+
+        var e = FXGL.entityBuilder(data)
+                .type(ENEMY_BOSS)
+                .bbox(new HitBox(new Point2D(4, 4), BoundingShape.box(CELL_SIZE, CELL_SIZE)))
+                .with(new CellMoveComponent(CELL_SIZE, CELL_SIZE, 300))
+                .with(hp)
+                .view(hpView)
+                .with(new AStarMoveComponent(new LazyValue<>(() -> geto("grid"))))
+                .with(new EnemyMoveComponent(BOSS))
+                .with(new AnimationComponent(ENEMY_UP,ENEMY_DOWN,ENEMY_LEFT,ENEMY_RIGHT,54, 40,3,2))
                 .with(new CollidableComponent(true))
                 .build();
         e.setLocalAnchorFromCenter();
@@ -87,11 +111,12 @@ public class Factory implements EntityFactory {
         var e = FXGL.entityBuilder(data)
                 .type(BOSS)
                 .bbox(new HitBox(new Point2D(4, 4), BoundingShape.box(72, 96)))
-                .with(new CellMoveComponent(CellSize, CellSize, 150))
+                .with(new CellMoveComponent(CELL_SIZE, CELL_SIZE, 150))
                 .with(hp)
                 .view(hpView)
                 .with(new AStarMoveComponent(new LazyValue<>(() -> geto("grid"))))
-                .with(new BossComponent())
+                .with(new EnemyMoveComponent(BOSS))
+                .with(new AnimationComponent(BOSS_UP,BOSS_DOWN,BOSS_LEFT,BOSS_RIGHT,72, 96,3,2))
                 .with(new CollidableComponent(true))
                 .build();
         e.setLocalAnchorFromCenter();
@@ -114,21 +139,23 @@ public class Factory implements EntityFactory {
                 .bbox(new HitBox(new Point2D(4, 4), BoundingShape.box(39, 30)))
                 .with(hp)
                 .view(hpView)
-                .with(new CellMoveComponent(CellSize, CellSize, 250))
+                .with(new CellMoveComponent(CELL_SIZE, CELL_SIZE, 250))
                 .with(new AStarMoveComponent(new LazyValue<>(() -> geto("grid"))))
                 .with(new CollidableComponent(true))
                 .with(new PlayerComponent())
+                .with(new AnimationComponent(PLAYER_UP,PLAYER_DOWN,PLAYER_LEFT,PLAYER_RIGHT,CELL_SIZE,CELL_SIZE,3,2))
                 .build();
         e.setLocalAnchorFromCenter();
         return e;
     }
+
     @Spawns("Bullet")
     public Entity spawnBullet(SpawnData data) {
 
        return FXGL.entityBuilder(data)
                 .at(data.getX(), data.getY() - 6.5)
                 .type(BULLET)
-                .viewWithBBox(texture("bullet2.png",10,10))
+                .viewWithBBox(texture(BULLET_TEXTURE,10,10))
                 .with(new CollidableComponent(true))
                 .with(new ProjectileComponent(data.get("direction"), 1200))
                 .rotationOrigin(0, 1)
@@ -139,8 +166,8 @@ public class Factory implements EntityFactory {
     public Entity newExit(SpawnData data) {
         return entityBuilder(data)
                 .type(EXIT)
-                .viewWithBBox("exit.jpg")
-                .scaleOrigin(CellSize,CellSize)
+                .viewWithBBox(EXIT_TEXTURE)
+                .scaleOrigin(CELL_SIZE,CELL_SIZE)
                 .collidable()
                 .build();
     }

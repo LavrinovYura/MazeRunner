@@ -28,4 +28,4 @@ javafx {
     modules = [ 'javafx.controls','javafx.fxml', 'javafx.swing', 'javafx.media' ]
 }
 
-mainClassName = "MazeRunnerMain.java"
+mainClassName = "src/main/java/MazeRunner/MazeRunnerMain.java"

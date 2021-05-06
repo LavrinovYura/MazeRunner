@@ -10,10 +10,13 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.pathfinding.CellState;
 import com.almasb.fxgl.pathfinding.astar.AStarGrid;
+import com.almasb.fxgl.physics.PhysicsWorld;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import org.jetbrains.annotations.NotNull;
 
+import static MazeRunner.MazeParameters.CELL_SIZE;
+import static MazeRunner.MazeParameters.FIELD_SIZE;
 import static MazeRunner.Type.*;
 import static com.almasb.fxgl.dsl.FXGL.*;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.getInput;
@@ -21,7 +24,7 @@ import static com.almasb.fxgl.dsl.FXGLForKtKt.getInput;
 
 public class MazeRunnerMain extends GameApplication {
 
-    public static final int CellSize = 40;
+    public static AStarGrid grid;
 
     public Entity player;
 
@@ -52,11 +55,6 @@ public class MazeRunnerMain extends GameApplication {
     protected void onPreInit() {
         getSettings().setGlobalMusicVolume(0.1);
         getSettings().setGlobalSoundVolume(0.1);
-    }
-
-    @Override
-    public void onUpdate(double tpf) {
-
     }
 
     @Override
@@ -103,7 +101,6 @@ public class MazeRunnerMain extends GameApplication {
     protected void initGame() {
         getGameWorld().addEntityFactory(new Factory());
         setLevel();
-
     }
 
     public void setLevel() {
@@ -113,8 +110,8 @@ public class MazeRunnerMain extends GameApplication {
 
         int cellX = 0;
         int cellY = 0;
-        for (int i = 0; i < 20; i++) {
-            for (int j = 0; j < 20; j++) {
+        for (int i = 0; i < FIELD_SIZE; i++) {
+            for (int j = 0; j < FIELD_SIZE; j++) {
                 switch (ar[i][j]) {
                     case "0":
                         break;
@@ -144,13 +141,13 @@ public class MazeRunnerMain extends GameApplication {
                     }
 
                 }
-                cellX += CellSize;
+                cellX += CELL_SIZE;
             }
-            cellY += CellSize;
+            cellY += CELL_SIZE;
             cellX = 0;
         }
 
-        AStarGrid grid = AStarGrid.fromWorld(getGameWorld(), 20, 20, CellSize, CellSize, type -> {
+        grid = AStarGrid.fromWorld(getGameWorld(), FIELD_SIZE, FIELD_SIZE, CELL_SIZE, CELL_SIZE, type -> {
             if (type.equals(WALL))
                 return CellState.NOT_WALKABLE;
 
@@ -159,12 +156,12 @@ public class MazeRunnerMain extends GameApplication {
         set("grid", grid);
 
         //getGameScene().getViewport().bindToEntity(player, getAppWidth() / 2, getAppHeight() / 2);
-
     }
 
 
     @Override
     protected void initPhysics() {
+
         onCollisionBegin(ENEMY, BULLET, (enemy, bullet) -> {
             var hp = enemy.getComponent(HealthIntComponent.class);
             if (hp.getValue() > 1) {
@@ -175,13 +172,23 @@ public class MazeRunnerMain extends GameApplication {
             enemy.removeFromWorld();
             bullet.removeFromWorld();
         });
+
+        onCollisionBegin(ENEMY_BOSS, BULLET, (enemy, bullet) -> {
+            var hp = enemy.getComponent(HealthIntComponent.class);
+            if (hp.getValue() > 1) {
+                bullet.removeFromWorld();
+                hp.damage(1);
+                return;
+            }
+            enemy.removeFromWorld();
+            bullet.removeFromWorld();
+        });
+
         onCollisionBegin(BOSS, BULLET, (boss, bullet) -> {
             var hp = boss.getComponent(HealthIntComponent.class);
-            if (hp.getValue() == 60 || hp.getValue() == 30) {
-                for (int i = 0; i < 10; i++) {
-                    spawn("E", boss.getX(), boss.getY());
 
-                }
+            if (hp.getValue() == 60 || hp.getValue() == 30) {
+                    spawn("EB", boss.getX(), boss.getY());
             }
 
             if (hp.getValue() == 1 && secondLive) {
@@ -220,6 +227,16 @@ public class MazeRunnerMain extends GameApplication {
             hp.damage(1);
         });
 
+        onCollision(PLAYER, ENEMY_BOSS, (player, enemy) -> {
+
+            var hp = player.getComponent(HealthIntComponent.class);
+            if (hp.getValue() == 0) {
+                gameOver();
+                return;
+            }
+            hp.damage(1);
+        });
+
         onCollision(PLAYER, BOSS, (player, enemy) -> {
             var hp = player.getComponent(HealthIntComponent.class);
             if (hp.getValue() == 0) {
@@ -228,6 +245,7 @@ public class MazeRunnerMain extends GameApplication {
             }
             hp.damage(3);
         });
+
     }
 
     private void gameOver() {

@@ -1,7 +1,5 @@
 package MazeRunner.Components;
 
-
-import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.component.Required;
 import com.almasb.fxgl.pathfinding.astar.AStarMoveComponent;
@@ -10,15 +8,8 @@ import com.almasb.fxgl.texture.AnimationChannel;
 import javafx.scene.image.Image;
 import javafx.util.Duration;
 
-import static MazeRunner.Type.PLAYER;
-import static com.almasb.fxgl.dsl.FXGL.image;
-import static com.almasb.fxgl.dsl.FXGLForKtKt.getGameWorld;
-
-
 @Required(AStarMoveComponent.class)
-public class EnemyComponent extends Component {
-
-    private AStarMoveComponent astar;
+public class AnimationComponent extends Component {
 
     private double lastX = 0;
 
@@ -28,17 +19,22 @@ public class EnemyComponent extends Component {
 
     private final AnimationChannel animIdle, animUP, animDown, animRight, animLeft;
 
-    public EnemyComponent() {
-        Image imageUp = image("enemyU.png");
-        Image imageDown = image("enemyD.png");
-        Image imageLeft = image("enemyL.png");
-        Image imageRight = image("enemyR.png");
+    public AnimationComponent(
+            Image imageUp,
+            Image imageDown,
+            Image imageLeft,
+            Image imageRight,
+            int frameWidth,
+            int frameHeight,
+            int framesPerRow,
+            int endFrame
+    ) {
 
-        animIdle = new AnimationChannel(imageDown, 3, 50, 40, Duration.seconds(1), 1, 1);
-        animUP = new AnimationChannel(imageUp, 3, 60, 40, Duration.seconds(0.66), 0, 2);
-        animDown = new AnimationChannel(imageDown, 3, 60, 40, Duration.seconds(0.66), 0, 2);
-        animLeft = new AnimationChannel(imageLeft, 3, 50, 40, Duration.seconds(0.66), 0, 2);
-        animRight = new AnimationChannel(imageRight, 3, 50, 40, Duration.seconds(0.66), 0, 2);
+        animIdle = new AnimationChannel(imageDown, framesPerRow, frameWidth, frameHeight,  Duration.seconds(1), 1, 1);
+        animUP = new AnimationChannel(imageUp, framesPerRow, frameWidth, frameHeight,  Duration.seconds(0.66), 0, endFrame);
+        animDown = new AnimationChannel(imageDown, framesPerRow, frameWidth, frameHeight,  Duration.seconds(0.66), 0, endFrame);
+        animLeft = new AnimationChannel(imageLeft, framesPerRow, frameWidth, frameHeight,  Duration.seconds(0.66), 0, endFrame);
+        animRight = new AnimationChannel(imageRight, framesPerRow, frameWidth, frameHeight,  Duration.seconds(0.66), 0, endFrame);
 
         texture = new AnimatedTexture(animIdle);
         texture.loop();
@@ -46,11 +42,6 @@ public class EnemyComponent extends Component {
 
     @Override
     public void onUpdate(double tpf) {
-
-        Entity player = getGameWorld().getSingleton(PLAYER);
-        if (getEntity().distance(player) < 300) {
-            astar.moveToCell(player.call("getCellX"), player.call("getCellY"));
-        }
 
         double dx = entity.getX() - lastX;
         double dy = entity.getY() - lastY;
@@ -88,13 +79,8 @@ public class EnemyComponent extends Component {
         }
     }
 
-
-
     @Override
     public void onAdded() {
-
         entity.getViewComponent().addChild(texture);
     }
-
-
 }

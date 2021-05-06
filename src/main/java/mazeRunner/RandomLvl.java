@@ -70,7 +70,6 @@ public class RandomLvl {
             }
             randomArray[10][10] = BOSS.getBoss();
         }
-        System.out.println(EXIT.getExit());
         return randomArray;
     }
 }

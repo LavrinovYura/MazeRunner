@@ -1,5 +1,8 @@
 package mazeRunner;
 
+import com.almasb.fxgl.dsl.FXGL;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import mazeRunner.components.PlayerComponent;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
@@ -14,6 +17,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
+
 import static mazeRunner.MazeParameters.CELL_SIZE;
 import static mazeRunner.MazeParameters.FIELD_SIZE;
 import static mazeRunner.Type.*;
@@ -25,9 +30,9 @@ public class MazeRunnerMain extends GameApplication {
 
     public static AStarGrid grid;
 
-    public Entity player;
+    public static Entity player;
 
-    public PlayerComponent playerComponent;
+    public static PlayerComponent playerComponent;
 
     public Boolean secondLive = true;
 
@@ -68,21 +73,21 @@ public class MazeRunnerMain extends GameApplication {
         getInput().addAction(new UserAction("Move Left") {
             @Override
             protected void onAction() {
-                player.getComponent(PlayerComponent.class).moveLeft();
+                playerComponent.moveLeft();
             }
         }, KeyCode.A);
 
         getInput().addAction(new UserAction("Move Down") {
             @Override
             protected void onAction() {
-                player.getComponent(PlayerComponent.class).moveDown();
+                playerComponent.moveDown();
             }
         }, KeyCode.S);
 
         getInput().addAction(new UserAction("Move Right") {
             @Override
             protected void onAction() {
-                player.getComponent(PlayerComponent.class).moveRight();
+                playerComponent.moveRight();
             }
         }, KeyCode.D);
 
@@ -95,6 +100,12 @@ public class MazeRunnerMain extends GameApplication {
 
     }
 
+    @Override
+    protected void initGameVars(Map<String, Object> vars) {
+        vars.put("score", 0);
+        vars.put("boss", 0);
+        vars.put("lvls", 0);
+    }
 
     @Override
     protected void initGame() {
@@ -157,7 +168,6 @@ public class MazeRunnerMain extends GameApplication {
         //getGameScene().getViewport().bindToEntity(player, getAppWidth() / 2, getAppHeight() / 2);
     }
 
-
     @Override
     protected void initPhysics() {
 
@@ -168,6 +178,7 @@ public class MazeRunnerMain extends GameApplication {
                 hp.damage(1);
                 return;
             }
+            inc("score", +5);
             enemy.removeFromWorld();
             bullet.removeFromWorld();
         });
@@ -179,6 +190,7 @@ public class MazeRunnerMain extends GameApplication {
                 hp.damage(1);
                 return;
             }
+            inc("score", +10);
             enemy.removeFromWorld();
             bullet.removeFromWorld();
         });
@@ -187,7 +199,7 @@ public class MazeRunnerMain extends GameApplication {
             var hp = boss.getComponent(HealthIntComponent.class);
 
             if (hp.getValue() == 60 || hp.getValue() == 30) {
-                    spawn("EB", boss.getX(), boss.getY());
+                spawn("EB", boss.getX(), boss.getY());
             }
 
             if (hp.getValue() == 1 && secondLive) {
@@ -200,7 +212,8 @@ public class MazeRunnerMain extends GameApplication {
                 hp.damage(1);
                 return;
             }
-
+            inc("score", +50);
+            inc("boss",+1);
             secondLive = true;
             getAudioPlayer().stopAllMusic();
             boss.removeFromWorld();
@@ -213,6 +226,7 @@ public class MazeRunnerMain extends GameApplication {
 
         onCollisionBegin(PLAYER, EXIT, (player, exit) -> {
             getGameWorld().getEntitiesCopy().forEach(Entity::removeFromWorld);
+            inc("lvls", +1);
             setLevel();
         });
 
@@ -247,9 +261,30 @@ public class MazeRunnerMain extends GameApplication {
 
     }
 
+
+    @Override
+    protected void initUI() {
+        Text scoreText = getUIFactoryService().newText("", Color.WHITE, 28);
+        scoreText.setTranslateX(10);
+        scoreText.setTranslateY(28);
+        scoreText.textProperty().bind(getip("score").asString("score: %d"));
+        scoreText.setStroke(Color.GOLD);
+
+        getGameScene().addUINode(scoreText);
+    }
+
     private void gameOver() {
         getAudioPlayer().stopAllMusic();
-        getGameController().gotoMainMenu();
+
+        String gameOver = "Game Over!\n\n" +
+                "Final score: " +
+                geti("score") +
+                "\nLevel's passed: " +
+                FXGL.geti("lvls") +
+                "\nBosse's killed: " +
+                geti("boss");
+
+        FXGL.getDialogService().showMessageBox(gameOver, () -> FXGL.getGameController().gotoMainMenu());
     }
 
     public static void main(String[] args) {

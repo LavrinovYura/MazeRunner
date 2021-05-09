@@ -19,7 +19,6 @@ public class PlayerComponent extends Component {
 
     public void moveDown() {
         astar.moveToDownCell();
-
     }
 
     public void moveRight() {

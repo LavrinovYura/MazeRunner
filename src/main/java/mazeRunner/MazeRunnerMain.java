@@ -1,6 +1,7 @@
 package mazeRunner;
 
 import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.input.virtual.VirtualButton;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import mazeRunner.components.PlayerComponent;
@@ -68,7 +69,7 @@ public class MazeRunnerMain extends GameApplication {
             protected void onAction() {
                 playerComponent.moveUp();
             }
-        }, KeyCode.W);
+        }, KeyCode.W, VirtualButton.UP);
 
         getInput().addAction(new UserAction("Move Left") {
             @Override
@@ -87,9 +88,9 @@ public class MazeRunnerMain extends GameApplication {
         getInput().addAction(new UserAction("Move Right") {
             @Override
             protected void onAction() {
-                playerComponent.moveRight();
+             playerComponent.moveRight();
             }
-        }, KeyCode.D);
+        }, KeyCode.D, VirtualButton.RIGHT);
 
         getInput().addAction(new UserAction("Shoot") {
             @Override
@@ -164,7 +165,6 @@ public class MazeRunnerMain extends GameApplication {
             return CellState.WALKABLE;
         });
         set("grid", grid);
-
         //getGameScene().getViewport().bindToEntity(player, getAppWidth() / 2, getAppHeight() / 2);
     }
 
@@ -213,7 +213,7 @@ public class MazeRunnerMain extends GameApplication {
                 return;
             }
             inc("score", +50);
-            inc("boss",+1);
+            inc("boss", +1);
             secondLive = true;
             getAudioPlayer().stopAllMusic();
             boss.removeFromWorld();

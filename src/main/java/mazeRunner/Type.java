@@ -1,12 +1,17 @@
 package mazeRunner;
 
 public enum Type {
-    PLAYER, ENEMY, BULLET, WALL, EXIT, BOSS, ENEMY_BOSS;
+    PLAYER("P"), ENEMY("E"), BULLET("Bullet"), WALL("W"),
+    EXIT("EX"), BOSS("B"), ENEMY_BOSS("EB");
 
+    private final String name;
 
-    public String getWall() { return "W"; }
-    public String getEnemy() { return "E"; }
-    public String getExit() { return "EX"; }
-    public String getBoss() { return "B"; }
-    public String getPlayer() { return "P"; }
+    Type(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
 }

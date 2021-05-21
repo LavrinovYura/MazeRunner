@@ -1,4 +1,3 @@
-
 import javafx.application.Platform;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -14,7 +13,7 @@ public final class RunWithFX implements BeforeAllCallback {
     private static boolean jfxStarted = false;
 
     @Override
-    public void beforeAll(ExtensionContext context) throws Exception {
+    public void beforeAll(ExtensionContext context) {
         if (jfxStarted)
             return;
 

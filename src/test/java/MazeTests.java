@@ -1,17 +1,12 @@
-import com.almasb.fxgl.app.FXGLApplication;
+
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.dsl.components.HealthIntComponent;
 import com.almasb.fxgl.pathfinding.astar.AStarMoveComponent;
 import mazeRunner.*;
 import mazeRunner.components.PlayerComponent;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 import static mazeRunner.MazeParameters.CELL_SIZE;
@@ -23,15 +18,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class MazeTests {
 
     public static void init() throws InterruptedException {
-        Thread t = new Thread(() -> {
-            GameApplication.launch(MazeRunnerMain.class, new String[0]);
-        });
+        Thread t = new Thread(() -> GameApplication.launch(MazeRunnerMain.class, new String[0]));
         t.start();
-        Thread.sleep(2700);
+        Thread.sleep(3300);
     }
 
     @Test
     public void playerInit() throws InterruptedException {
+
         init();
 
         assertEquals(40, getGameWorld().getSingleton(PLAYER).getX());
@@ -56,9 +50,6 @@ public class MazeTests {
         move.moveToCell(2, 18);
         Thread.sleep(7000);
         assertEquals(2, (int) getGameWorld().getSingleton(PLAYER).getX() / 40);
-
-        move.moveToCell((int) getGameWorld().getSingleton(EXIT).getX() / CELL_SIZE, (int) getGameWorld().getSingleton(EXIT).getY() / CELL_SIZE);
-        Thread.sleep(5000);
 
         move.moveToCell(2, 2);
         Thread.sleep(10000);

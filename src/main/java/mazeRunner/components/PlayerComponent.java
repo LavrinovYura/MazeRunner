@@ -10,11 +10,10 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 
 public class PlayerComponent extends Component {
 
-    private AStarMoveComponent astar;
+    private static AStarMoveComponent astar;
 
     public void moveUp() {
         astar.moveToUpCell();
-
     }
 
     public void moveDown() {

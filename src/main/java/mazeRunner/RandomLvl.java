@@ -1,6 +1,6 @@
 package mazeRunner;
 
-import java.util.Random;
+import java.util.*;
 
 import static mazeRunner.Type.*;
 
@@ -27,7 +27,7 @@ public class RandomLvl {
             {"W", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "W",},
             {"W", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "W",},
             {"W", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "W",},
-            {"W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W" }
+            {"W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W"}
     };
 
 
@@ -51,24 +51,24 @@ public class RandomLvl {
                 if (i == 0 || i == 2 || i == 4) {
                     for (int j = 0; j < 18; j++) {
                         int r2 = random.nextInt(2) + 1;
-                        if (j % r2 == 0) randomArray[r][j] = WALL.getWall();
+                        if (j % r2 == 0) randomArray[r][j] = WALL.getName();
                     }
                 } else {
                     for (int j = 2; j < 18; j++) {
                         int r2 = random.nextInt(3) + 1;
-                        if (j % r2 == 0) randomArray[j][r] = WALL.getWall();
-                        else if (r % r2 == 0) randomArray[j + 1][r + 1] = ENEMY.getEnemy();
+                        if (j % r2 == 0) randomArray[j][r] = WALL.getName();
+                        else if (r % r2 == 0) randomArray[j + 1][r + 1] = ENEMY.getName();
                     }
                 }
             }
             r = random.nextInt(15) + 4;
-            randomArray[19][r] = EXIT.getExit();
+            randomArray[19][r] = EXIT.getName();
 
         } else {
             for (int i = 4; i < 15; i++) {
-                randomArray[9][i] = WALL.getWall();
+                randomArray[9][i] = WALL.getName();
             }
-            randomArray[10][10] = BOSS.getBoss();
+            randomArray[10][10] = BOSS.getName();
         }
         return randomArray;
     }

@@ -39,7 +39,7 @@ public class RandomLvl {
         int r;
         Random random = new Random();
         r = random.nextInt(15) + 1;
-        if (r > 3) {
+        if (r > 2) {
             for (int i = 0; i < 6; i++) {
 
                 switch (i) {

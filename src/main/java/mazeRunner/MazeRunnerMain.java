@@ -30,9 +30,9 @@ public class MazeRunnerMain extends GameApplication {
 
     public static AStarGrid grid;
 
-    public static Entity player;
+    public Entity player;
 
-    public static PlayerComponent playerComponent;
+    public PlayerComponent playerComponent;
 
     public Boolean secondLive = true;
 
@@ -44,7 +44,7 @@ public class MazeRunnerMain extends GameApplication {
         settings.setVersion("1.0");
         settings.setManualResizeEnabled(true);
         settings.setPreserveResizeRatio(true);
-        settings.setMainMenuEnabled(true);
+        settings.setMainMenuEnabled(false);
         settings.setGameMenuEnabled(true);
         settings.setSceneFactory(new SceneFactory() {
             @NotNull

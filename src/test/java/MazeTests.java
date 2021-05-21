@@ -1,7 +1,6 @@
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.dsl.FXGL;
-import com.almasb.fxgl.dsl.components.HealthIntComponent;
 import com.almasb.fxgl.pathfinding.astar.AStarMoveComponent;
 import mazeRunner.*;
 import mazeRunner.components.PlayerComponent;
@@ -13,6 +12,10 @@ import static mazeRunner.MazeParameters.CELL_SIZE;
 import static mazeRunner.Type.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+//if you want to test you may
+//set settings.setMainMenuEnabled(false!!!)
+//or first sleep do in range 10-15s
+//to start game in time
 
 @ExtendWith(RunWithFX.class)
 public class MazeTests {
@@ -20,7 +23,7 @@ public class MazeTests {
     public static void init() throws InterruptedException {
         Thread t = new Thread(() -> GameApplication.launch(MazeRunnerMain.class, new String[0]));
         t.start();
-        Thread.sleep(3300);
+        Thread.sleep(10000);
     }
 
     @Test
@@ -33,8 +36,6 @@ public class MazeTests {
 
         FXGL.getExecutor().startAsyncFX(() -> getGameWorld().removeEntities(getGameWorld().getEntitiesByType(ENEMY, BOSS))).await();
 
-        getGameWorld().getSingleton(PLAYER).getComponent(HealthIntComponent.class).setMaxValue(100000000);
-
         var component = getGameWorld().getSingleton(PLAYER).getComponent(PlayerComponent.class);
 
         component.moveRight();
@@ -45,15 +46,15 @@ public class MazeTests {
 
         move.moveToCell(18, 2);
         Thread.sleep(5000);
-        assertEquals(18, (int) component.getEntity().getX() / 40);
+        assertEquals(18, (int) component.getEntity().getX() /CELL_SIZE);
 
         move.moveToCell(2, 18);
         Thread.sleep(7000);
-        assertEquals(2, (int) getGameWorld().getSingleton(PLAYER).getX() / 40);
+        assertEquals(2, (int) getGameWorld().getSingleton(PLAYER).getX() / CELL_SIZE);
 
-        move.moveToCell(2, 2);
+        move.moveToCell(1, 1);
         Thread.sleep(10000);
-        assertEquals(2, (int) component.getEntity().getX() / 40);
+        assertEquals(1, (int) component.getEntity().getX() / CELL_SIZE);
 
     }
 }

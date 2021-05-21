@@ -45,7 +45,7 @@ public class MazeRunnerMain extends GameApplication {
         settings.setVersion("1.0");
         settings.setManualResizeEnabled(true);
         settings.setPreserveResizeRatio(true);
-        settings.setMainMenuEnabled(false);
+        settings.setMainMenuEnabled(true);
         settings.setGameMenuEnabled(true);
         settings.setSceneFactory(new SceneFactory() {
             @NotNull
@@ -119,6 +119,8 @@ public class MazeRunnerMain extends GameApplication {
 
         ar = RandomLvl.drawRandom();
 
+        spawn("BG");
+
         int cellX = 0;
         int cellY = 0;
         for (int i = 0; i < FIELD_SIZE; i++) {
@@ -144,19 +146,15 @@ public class MazeRunnerMain extends GameApplication {
                         spawn("E", cellX, cellY);
                         break;
                     }
-                    case "P": {
-                        player = spawn("P", cellX, cellY);
-                        playerComponent = player.getComponent(PlayerComponent.class);
-                        spawn("BG");
-                        break;
-                    }
-
                 }
                 cellX += CELL_SIZE;
             }
             cellY += CELL_SIZE;
             cellX = 0;
         }
+
+        player = spawn("P", 40, 40);
+        playerComponent = player.getComponent(PlayerComponent.class);
 
         grid = AStarGrid.fromWorld(getGameWorld(), FIELD_SIZE, FIELD_SIZE, CELL_SIZE, CELL_SIZE, type -> {
             if (type.equals(WALL))
